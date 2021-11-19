@@ -176,3 +176,75 @@ exports.getListAuthReviewing = async (req, res) => {
   );
   res.status(200).send(response.rows);
 };
+
+// ii.6 , ii.7 chưa query
+
+//ii.8---------RESULT REVIEW PAPER REVIEWED IN THIS YEAR--------------
+exports.getResultReviewedPaper = async (req, res) => {
+  const response = await db.query(
+    `SELECT paper.paper_id, EXTRACT(year FROM evaluation.create_at), decision.result FROM (((scientist 
+      INNER JOIN author_paper_relation ON scientist.scientist_id = author_paper_relation.scientist_id
+      AND publication_role = 'REVIEWER')
+        INNER JOIN paper ON author_paper_relation.paper_id = paper.paper_id
+        AND paper.status = 'REVIEWED')
+        INNER JOIN evaluation ON paper.paper_id = evaluation.paper_id
+        INNER JOIN decision ON paper.paper_id = decision.paper_id
+      )
+      WHERE EXTRACT(year FROM evaluation.create_at) = '2021'`
+  );
+  res.status(200).send(response.rows);
+};
+
+//ii.9---------3 YEAR WITH MAX REVIEWED PAPER-------------
+
+/*create view year_max_paper_reviewed as
+SELECT EXTRACT(year FROM evaluation.create_at), COUNT(*) AS "num_papers" FROM (paper
+INNER JOIN evaluation ON paper.paper_id = evaluation.paper_id
+AND paper.status = 'REVIEWED')
+GROUP BY EXTRACT(year FROM evaluation.create_at)*/
+
+exports.get3YearMaxReviewedPaper = async (req, res) => {
+  const response = await db.query(
+    `SELECT year_max_paper_reviewed.date_part
+    FROM year_max_paper_reviewed
+    ORDER BY year_max_paper_reviewed.num_papers DESC
+    LIMIT 3`
+  );
+  res.status(200).send(response.rows);
+};
+
+//ii.10----------3 REVIEWED PAPER WITH ACCEPTANCE----------
+exports.get3ReviewedPaperAcceptance = async (req, res) => {
+  const response = await db.query(
+    `SELECT paper.paper_id, decision.result FROM (paper
+      INNER JOIN decision ON paper.paper_id = decision.paper_id
+      AND decision.result = 'ACCEPTANCE')
+      WHERE paper.status = 'REVIEWED'
+      LIMIT 3`
+  );
+  res.status(200).send(response.rows);
+};
+
+//ii.11------------3 REVIEWED PAPER WITH REJECTION----------
+exports.get3ReviewedPaperRejection = async (req, res) => {
+  const response = await db.query(
+    `SELECT paper.paper_id, decision.result FROM (paper
+      INNER JOIN decision ON paper.paper_id = decision.paper_id
+      AND decision.result = 'REJECTION')
+      WHERE paper.status = 'REVIEWED'
+      LIMIT 3`
+  );
+  res.status(200).send(response.rows);
+};
+
+//ii.12-----------AVARAGE REVIEWED PAPER LAST 5 YEARS----------
+exports.getAvgReviewedPaper5Years = async (req, res) => {
+  const response = await db.query(
+    `SELECT AVG(num_papers)::NUMERIC(10,2) FROM (
+      SELECT year_max_paper_reviewed.num_papers FROM year_max_paper_reviewed
+      ORDER BY year_max_paper_reviewed.date_part DESC
+      LIMIT 5)
+    AS fa`
+  );
+  res.status(200).send(response.rows);
+};
