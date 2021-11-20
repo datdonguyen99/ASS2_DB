@@ -177,7 +177,50 @@ exports.getListAuthReviewing = async (req, res) => {
   res.status(200).send(response.rows);
 };
 
-// ii.6 , ii.7 chưa query
+//ii.6--------GET LIST PAPER OF AUTHOR THAT REVIEWED LAST 3 YEARS-------
+
+/*CREATE VIEW list_author_paper AS
+SELECT scientist.scientist_id, EXTRACT(year FROM evaluation.create_at), paper.title FROM (((scientist 
+INNER JOIN author_paper_relation ON scientist.scientist_id = author_paper_relation.scientist_id
+AND publication_role = 'AUTHOR')
+INNER JOIN paper ON author_paper_relation.paper_id = paper.paper_id
+AND paper.status = 'REVIEWED')
+INNER JOIN evaluation ON paper.paper_id = evaluation.paper_id)*/
+
+exports.getListPaperOfAuthorReviewed3Years = async (req, res) => {
+  const response = await db.query(
+    `SELECT * FROM list_author_paper
+    WHERE list_author_paper.date_part > 2018`
+  );
+  res.status(200).send(response.rows);
+};
+
+//ii.7--------GET LIST AUTHOR THAT MAX REVIEWED PAPER-------
+/*
+CREATE VIEW author_max_paper AS
+SELECT scientist.scientist_id, paper.paper_id, scientist.first_name, scientist.last_name FROM ((scientist
+INNER JOIN author_paper_relation ON scientist.scientist_id = author_paper_relation.scientist_id
+AND publication_role = 'AUTHOR')
+INNER JOIN paper ON author_paper_relation.paper_id = paper.paper_id			   
+AND paper.status = 'REVIEWED'		   
+)
+
+CREATE VIEW author_max_paper_count AS
+SELECT author_max_paper.scientist_id, COUNT(scientist_id) AS cnt, author_max_paper.first_name, author_max_paper.last_name
+FROM author_max_paper
+GROUP BY author_max_paper.scientist_id, author_max_paper.first_name, author_max_paper.last_name
+ORDER BY COUNT(scientist_id) DESC
+*/
+exports.getListAuthorMaxReviewedPaper = async (req, res) => {
+  const response = await db.query(
+    `SELECT * FROM author_max_paper_count
+    WHERE cnt = (
+      SELECT MAX(cnt)
+      FROM author_max_paper_count
+    );`
+  );
+  res.status(200).send(response.rows);
+};
 
 //ii.8---------RESULT REVIEW PAPER REVIEWED IN THIS YEAR--------------
 exports.getResultReviewedPaper = async (req, res) => {
@@ -192,6 +235,7 @@ exports.getResultReviewedPaper = async (req, res) => {
       )
       WHERE EXTRACT(year FROM evaluation.create_at) = '2021'`
   );
+  // console.log(response);
   res.status(200).send(response.rows);
 };
 

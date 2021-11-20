@@ -10,6 +10,8 @@ router.get("/generalPaper", paperController.listGeneralPaper);
 router.get("/reviewPaper", paperController.listReviewPaper);
 router.get("/paper/reviewed/3year", paperController.getListReviewed3Year);
 router.get("/paper/reviewing/author", paperController.getListAuthReviewing);
+router.get("/paper/reviewed/author/list3year", paperController.getListPaperOfAuthorReviewed3Years);
+router.get("/paper/reviewed/maxauthor", paperController.getListAuthorMaxReviewedPaper);
 router.get("/paper/reviewed/result", paperController.getResultReviewedPaper);
 router.get("/paper/reviewed/max3year", paperController.get3YearMaxReviewedPaper);
 router.get("/paper/reviewed/acceptance", paperController.get3ReviewedPaperAcceptance);
