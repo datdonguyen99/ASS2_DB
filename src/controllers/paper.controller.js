@@ -57,6 +57,27 @@ exports.createPaper = async (req, res) => {
   });
 };
 
+exports.getListScientist = async (req, res) => {
+  const response = await db.query(
+    `SELECT scientist.scientist_id, scientist.first_name, scientist.last_name,
+        scientist.address, scientist.publication_role
+    FROM scientist
+    `
+  );
+  res.status(200).send(response.rows);
+};
+
+exports.getInforReviewer = async (req, res) => {
+  const response = await db.query(
+    `SELECT scientist.scientist_id, scientist.first_name, scientist.last_name,
+        scientist.address, scientist.publication_role
+    FROM scientist
+    WHERE scientist.publication_role = 'REVIEWER'
+    `
+  );
+  res.status(200).send(response.rows);
+};
+
 //----------UPDATE PERSONAL INFORMATION OF REVIEWER----------
 exports.updateInfoReviewer = async (req, res) => {
   const reviewer_id = parseInt(req.params.id);
@@ -64,23 +85,23 @@ exports.updateInfoReviewer = async (req, res) => {
     first_name,
     last_name,
     address,
-    occupation,
-    working_agency,
-    collab_date,
+    // occupation,
+    // working_agency,
+    // collab_date,
   } = req.body;
 
   const response = await db.query(
     `UPDATE scientist
-    SET first_name = $1, last_name = $2, address = $3, occupation = $4, working_agency = $5, collab_date = $6
+    SET first_name = $1, last_name = $2, address = $3
     WHERE publication_role = 'REVIEWER'
-    AND scientist_id = $7`,
+    AND scientist_id = $4`,
     [
       first_name,
       last_name,
       address,
-      occupation,
-      working_agency,
-      collab_date,
+      // occupation,
+      // working_agency,
+      // collab_date,
       reviewer_id,
     ]
   );

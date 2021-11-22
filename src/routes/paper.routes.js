@@ -1,6 +1,9 @@
 const router = require("express-promise-router")();
 const paperController = require("../controllers/paper.controller");
 
+router.get("/scientist", paperController.getListScientist);
+router.get("/scientist/reviewer", paperController.getInforReviewer);
+
 router.post("/paper", paperController.createPaper);
 router.put("/paper/reviewer/:id", paperController.updateInfoReviewer);
 router.put("/paper/:id", paperController.updatePaperByID);
