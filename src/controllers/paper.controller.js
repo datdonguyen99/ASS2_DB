@@ -65,7 +65,10 @@ exports.getListScientist = async (req, res) => {
     FROM scientist
     `
   );
-  res.status(200).send(response.rows);
+  res.status(200).send({
+    status: "success",
+    data: response.rows,
+  });
 };
 
 exports.getInforReviewer = async (req, res) => {
