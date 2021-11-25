@@ -25,7 +25,7 @@ exports.getListScientistByID = async (req, res) => {
   );
   res.status(200).send({
     status: "success",
-    data: response.rows,
+    data: response.rows[0],
   });
 };
 
