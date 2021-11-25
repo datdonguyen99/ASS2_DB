@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 // const index = require("./src/routes/index");
 const paperRoute = require("./src/routes/paper.routes");
+const scientistRoute = require("./src/routes/scientist.routes");
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // app.use("/api/", index);
 app.use("/api/", paperRoute);
+app.use("/api/", scientistRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

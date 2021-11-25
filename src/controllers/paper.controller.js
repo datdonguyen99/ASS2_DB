@@ -57,32 +57,6 @@ exports.createPaper = async (req, res) => {
   });
 };
 
-exports.getListScientist = async (req, res) => {
-  const response = await db.query(
-    `SELECT scientist.scientist_id, scientist.first_name, scientist.last_name,
-        scientist.address, scientist.publication_role, scientist.occupation,
-        scientist.working_agency, scientist.collab_date
-    FROM scientist
-    `
-  );
-  res.status(200).send({
-    status: "success",
-    data: response.rows,
-  });
-};
-
-exports.getInforReviewer = async (req, res) => {
-  const response = await db.query(
-    `SELECT scientist.scientist_id, scientist.first_name, scientist.last_name,
-        scientist.address, scientist.publication_role, scientist.occupation,
-        scientist.working_agency, scientist.collab_date
-    FROM scientist
-    WHERE scientist.publication_role = 'REVIEWER'
-    `
-  );
-  res.status(200).send(response.rows);
-};
-
 //----------UPDATE PERSONAL INFORMATION OF REVIEWER----------
 exports.updateInfoReviewer = async (req, res) => {
   const reviewer_id = parseInt(req.params.id);
