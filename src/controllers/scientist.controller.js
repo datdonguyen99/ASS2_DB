@@ -13,6 +13,22 @@ exports.getListScientist = async (req, res) => {
   });
 };
 
+exports.getListScientistByID = async (req, res) => {
+  const scientist_id = parseInt(req.params.id);
+  const response = await db.query(
+    `SELECT scientist.first_name, scientist.last_name,
+          scientist.address, scientist.publication_role, scientist.occupation,
+          scientist.working_agency, scientist.collab_date
+      FROM scientist
+      WHERE scientist.scientist_id = $1`,
+    [scientist_id]
+  );
+  res.status(200).send({
+    status: "success",
+    data: response.rows,
+  });
+};
+
 exports.getInforReviewer = async (req, res) => {
   const response = await db.query(
     `SELECT scientist.scientist_id, scientist.first_name, scientist.last_name,
