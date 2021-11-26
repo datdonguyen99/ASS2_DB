@@ -158,7 +158,7 @@ exports.deleteScientist = async (req, res) => {
     [scientist_id]
   );
   res.status(200).send({
-    status: "sucess",
+    status: "success",
     scientist_id: scientist_id,
   });
 };
